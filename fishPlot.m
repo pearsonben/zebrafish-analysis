@@ -1,8 +1,8 @@
 wildType1 = readtable('WT_1.A.csv');
 mutantType1 = readtable('Duchenne_1.A.csv');
 
-frames = 300;
-
+frames = 100;
+counter = 0;
 for i = 1 : frames
     
     % unmaintainable, needs to be a dynamic array of arrays for all datasets
@@ -29,20 +29,21 @@ for i = 1 : frames
     
     %calculating angle between two co-ordinates
     for j = 1 : angles
-        fprintf('wot');
+        
+        % inverse cosine of uv/|u||v| == angle between two co-ordinates
         magnitudes(1,j) = sqrt(xMT1(1,j).^2 + yMT1(1,j).^2);
         products(1,j) = xMT1(1,j) * yMT1(1,j);
     end
     
-    % inverse cosine of uv/|u||v| == angle between two co-ordinates
+    
     for j = 1: angles-1
         angle(1,j) = acos((products(1,j) + products(1,j+1))/(magnitudes(1,j)*magnitudes(1,j+1)));
         
         %if difference is more than 45 degrees between a frame, mark on the
         %plot
-        if 10 < angle(1,j)
-            plot(yMT1(1, 2*angle + 6), xMT1(1, 2*angle + 6));
-            disp('abnormal movement');
+        if (45 < rad2deg(angle(1,j))) && (rad2deg(angle(1,j)) < 135)
+            plot(yMT1(1,angles),xMT1(1,angles), 'r.'); %this doesnt work
+            counter = counter + 1;
         end
     end
     
@@ -62,7 +63,12 @@ for i = 1 : frames
     ylim([0,700]);
     
     pause(.05);
-    
+    disp(counter);
 end
+
+
+% so far, i have tried to add one to the counter every time the spine angle
+% is larger than 45 degrees, however it seems that almost every movement is
+% larger than 45 degrees so something is wrong. Needs looking over tomorrow
 
 
