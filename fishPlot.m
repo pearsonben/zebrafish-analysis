@@ -18,34 +18,6 @@ for i = 1 : frames
     xMT1 = mutantType1{i, [8 10 12 14 16 18 20]};
     yMT1 = mutantType1{i, [9 11 13 15 17 19 21]};
     
-    angles = 7;
-    
-    %below used to calculate angles between spine points
-    
-    %allocating empty array for the magnitude values
-    magnitudes = zeros(1, 7);
-    angle = zeros(1,6);
-    products = zeros(1,7);
-    
-    %calculating angle between two co-ordinates
-    for j = 1 : angles
-        
-        % inverse cosine of uv/|u||v| == angle between two co-ordinates
-        magnitudes(1,j) = sqrt(xMT1(1,j).^2 + yMT1(1,j).^2);
-        products(1,j) = xMT1(1,j) * yMT1(1,j);
-    end
-    
-    
-    for j = 1: angles-1
-        angle(1,j) = acos((products(1,j) + products(1,j+1))/(magnitudes(1,j)*magnitudes(1,j+1)));
-        
-        %if difference is more than 45 degrees between a frame, mark on the
-        %plot
-        if (45 < rad2deg(angle(1,j))) && (rad2deg(angle(1,j)) < 135)
-            plot(yMT1(1,angles),xMT1(1,angles), 'r.'); %this doesnt work
-            counter = counter + 1;
-        end
-    end
     
     %first plots yWT against xWT, then yMT against xMT
     plot(yWT1,xWT1, yMT1, xMT1, 'LineWidth', 2.0);
