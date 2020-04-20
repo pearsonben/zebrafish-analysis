@@ -1,0 +1,74 @@
+myWTFolder = './data/wildTypes/';
+myPTFolder = './data/parkinsonTypes/';
+
+%checking for valid filepath
+if ~isfolder(myWTFolder)
+    errorMessage=sprintf('Error: The following folder does not exist:\n%s', myWTFolder);
+    uiwait(warndlg(errorMessage));
+    return;
+end
+
+if ~isfolder(myPTFolder)
+    errorMessage=sprintf('Error: The following folder does not exist:\n%s', myPTFolder);
+    uiwait(warndlg(errorMessage));
+    return;
+end
+
+filePatternWT = fullfile(myWTFolder, '*.csv');
+theFilesWT = dir(filePatternWT);
+
+filePatternPT = fullfile(myPTFolder, '*.csv');
+theFilesPT = dir(filePatternPT);
+
+
+frames = 1500;
+figure;
+
+
+for k = 1 : length(theFilesWT)
+    
+    baseFileNameWT = theFilesWT(k).name;
+    fullFileNameWT = fullfile(myWTFolder, baseFileNameWT);
+    dataWT = readtable(fullFileNameWT);
+    
+    baseFileNamePT = theFilesPT(k).name;
+    fullFileNamePT = fullfile(myPTFolder, baseFileNamePT);
+    dataPT = readtable(fullFileNamePT);
+    
+    plotRegression(dataWT, dataPT, iterations);
+
+    if k+1 <= length(theFilesWT)
+        figure(k+1);
+    end
+
+
+end
+
+
+
+
+function plotRegression(dataWT, dataPT, frames)
+
+   x = 1:frames;
+   
+   xRot = rot90(x);
+   
+   wt_tail_angles = rad2deg(dataWT{1:frames, 3}) + 180;
+   pt_tail_angles = rad2deg(dataPT{1:frames, 3}) + 180;
+    
+   TF1 = islocalmin(wt_tail_angles);
+   TF2 = islocalmin(pt_tail_angles);
+   TF3 = islocalmax(wt_tail_angles);
+   TF4 = islocalmax(pt_tail_angles);
+   
+   
+   wt_speed = abs( ( wt_tail_angles(TF3)-wt_tail_angles(TF1) )./( (xRot(TF3)-xRot(TF1))* 0.00333333 ) );
+   pt_speed = abs( ( pt_tail_angles(TF4)-pt_tail_angles(TF2) )./( (xRot(TF4)-xRot(TF2))* 0.00333333 ) );
+
+   x1 = rot90(1:length(wt_tail_angles));
+   x2 = rot90(1:length(pt_tail_angles));
+   
+    
+   
+   
+end

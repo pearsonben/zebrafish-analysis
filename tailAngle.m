@@ -66,12 +66,12 @@ function plotFish(dataWT, dataPT)
 
     
     %plotting tail angle for every frame
-    %plot(x, wt_tail_angles, x, pt_tail_angles, 'LineWidth', 2.0);
-    plot(x, pt_tail_angles, 'LineWidth', 2.0);
+    plot(x, wt_tail_angles, x, pt_tail_angles, 'LineWidth', 2.0);
+    %plot(x, pt_tail_angles, 'LineWidth', 2.0);
     hold on
     %plotting local mins and maxs
-   % plot(x(TF1), wt_tail_angles(TF1), 'r*', 'LineWidth', 2', 'color', 'g');
-   % plot(x(TF3), wt_tail_angles(TF3), 'r*', 'LineWidth', 2', 'color', 'c');
+    plot(x(TF1), wt_tail_angles(TF1), 'r*', 'LineWidth', 2', 'color', 'g');
+   plot(x(TF3), wt_tail_angles(TF3), 'r*', 'LineWidth', 2', 'color', 'c');
     plot(x(TF2), pt_tail_angles(TF2), 'r*', 'LineWidth', 2', 'color', 'g');
     plot(x(TF4), pt_tail_angles(TF4), 'r*', 'LineWidth', 2', 'color', 'c');
     
