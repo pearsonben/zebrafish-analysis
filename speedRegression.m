@@ -22,8 +22,9 @@ theFilesPT = dir(filePatternPT);
 
 
 frames = 1500;
-figure;
+% figure;
 
+gradients = zeros(length(theFilesWT), 2);
 
 for k = 1 : length(theFilesWT)
     
@@ -35,37 +36,62 @@ for k = 1 : length(theFilesWT)
     fullFileNamePT = fullfile(myPTFolder, baseFileNamePT);
     dataPT = readtable(fullFileNamePT);
     
-    plotRegression(dataWT, dataPT, frames);
+    val = plotRegression(dataWT, dataPT, frames);
 
+     gradients(k, 1) = val(1);
+     gradients(k, 2) = val(2);
+%     
     if k+1 <= length(theFilesWT)
-        figure(k+1);
+%         figure(k+1);
     end
 
 
 end
 
 
+wt_counter = 0;
+pt_counter = 0;
+
+for i = 1 : length(gradients)
+    
+   if (gradients(i, 1) < 0)
+        
+       wt_counter = wt_counter + 1;
+       
+   end
+   
+   if (gradients(i, 2) < 0)
+        
+       pt_counter = pt_counter + 1;
+       
+   end
+      
+end
+
+wt_SE_percentage = (wt_counter / length(gradients)) * 100;
+pt_SE_percentage = (pt_counter / length(gradients)) * 100;
+
+[wt_SE_percentage pt_SE_percentage]
+
+gradients
 
 
-function plotRegression(dataWT, dataPT, frames)
 
 
+
+
+
+
+
+function gradients = plotRegression(dataWT, dataPT, frames)
 
    %fixing figure window size
-   set(gcf, 'Position',  [15, 15, 1500, 950]);
+   %set(gcf, 'Position',  [15, 15, 1500, 950]);
    
    
    x = 1:frames;
    
    xRot = rot90(x);
-   
-   
-   
-    
-   
-   
-   
-   
    
    wt_tail_angles = rad2deg(dataWT{1:frames, 3}) + 180;
    pt_tail_angles = rad2deg(dataPT{1:frames, 3}) + 180;
@@ -101,29 +127,36 @@ function plotRegression(dataWT, dataPT, frames)
    x2 = rot90(1:length(pt_speed));
    
    p1 = polyfit(x1, wt_speed,1);
-   f1 = polyval(p1,x2);
+   %f1 = polyval(p1,x2);
     
    p2 = polyfit(x2, pt_speed,1);
-   f2 = polyval(p2,x2);
-   
+   %f2 = polyval(p2,x2);
+  
    
    % the return value of polyfit is [slope, intercept]
    % so p1(1) prints out the slope of the regression line
-   p1(1)
    
+   wt_gradient = p1(1);
+   pt_gradient = p2(1);
+   
+   gradients = [wt_gradient pt_gradient];
    
 %    plot(x1, wt_speed, 'r*', 'LineWidth', 2', 'color', 'r');
-    plot(x2, pt_speed, 'r*', 'LineWidth', 2', 'color', 'b');
-   grid on;
-   hold on;
-   plot(x2, f2, '--r', 'LineWidth', 2.0, 'color', 'r');
+%     plot(x2, pt_speed, 'r*', 'LineWidth', 2', 'color', 'b');
+%    grid on;
+%    hold on;
+%    plot(x2, f2, '--r', 'LineWidth', 2.0, 'color', 'r');
 %    plot(x2, f1, '--r', 'LineWidth', 2.0, 'color', 'b');
    
-   title("$\textbf{\emph Tail Speed Regression of Zebrafish, for  (" + frames + " frames at 300fps)}$", 'Interpreter','latex', 'FontSize', 20, 'fontweight', 'bold');
-    ylabel('$\textbf{\emph Speed (units/second)}$', 'fontweight', 'bold', 'fontsize', 16, 'Interpreter','latex');
-    xlabel('$\textbf{\emph Movement Cycle}$', 'fontweight' ,'bold', 'fontsize', 16, 'Interpreter','latex');
-    legend('$\textbf{\emph Speed}$', '$\textbf{\emph Regression Line}$', 'FontSize', 14, 'Interpreter','latex', 'fontweight', 'bold');
-   
-   ylim([0 4000]);
+%    title("$\textbf{\emph Tail Speed Regression of Zebrafish, for  (" + frames + " frames at 300fps)}$", 'Interpreter','latex', 'FontSize', 20, 'fontweight', 'bold');
+%     ylabel('$\textbf{\emph Speed (units/second)}$', 'fontweight', 'bold', 'fontsize', 16, 'Interpreter','latex');
+%     xlabel('$\textbf{\emph Movement Cycle}$', 'fontweight' ,'bold', 'fontsize', 16, 'Interpreter','latex');
+%     legend('$\textbf{\emph Speed}$', '$\textbf{\emph Regression Line}$', 'FontSize', 14, 'Interpreter','latex', 'fontweight', 'bold');
+%    
+%    ylim([0 4000]);
    
 end
+
+
+
+
