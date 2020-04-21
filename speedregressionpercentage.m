@@ -73,14 +73,6 @@ pt_SE_percentage = (pt_counter / length(gradients)) * 100;
 
 [wt_SE_percentage pt_SE_percentage]
 
-gradients
-
-
-
-
-
-
-
 
 
 function gradients = plotRegression(dataWT, dataPT, frames)

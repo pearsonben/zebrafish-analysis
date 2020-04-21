@@ -1,0 +1,87 @@
+myWTFolder = './data/wildTypes/';
+myPTFolder = './data/parkinsonTypes/';
+
+%checking for valid filepath
+if ~isfolder(myWTFolder)
+    errorMessage=sprintf('Error: The following folder does not exist:\n%s', myWTFolder);
+    uiwait(warndlg(errorMessage));
+    return;
+end
+
+if ~isfolder(myPTFolder)
+    errorMessage=sprintf('Error: The following folder does not exist:\n%s', myPTFolder);
+    uiwait(warndlg(errorMessage));
+    return;
+end
+
+filePatternWT = fullfile(myWTFolder, '*.csv');
+theFilesWT = dir(filePatternWT);
+
+filePatternPT = fullfile(myPTFolder, '*.csv');
+theFilesPT = dir(filePatternPT);
+
+
+frames = 1500;
+figure;
+
+
+
+for k = 1 : 5
+    
+    baseFileNameWT = theFilesWT(k).name;
+    fullFileNameWT = fullfile(myWTFolder, baseFileNameWT);
+    dataWT = readtable(fullFileNameWT);
+    
+    baseFileNamePT = theFilesPT(k).name;
+    fullFileNamePT = fullfile(myPTFolder, baseFileNamePT);
+    dataPT = readtable(fullFileNamePT);
+    
+    plotRegression(dataWT, dataPT, frames);
+
+%     
+    if k+1 <= 5
+        figure(k+1);
+    end
+
+
+end
+
+function plotRegression(dataWT, dataPT, frames)
+
+   %fixing figure window size
+   set(gcf, 'Position',  [15, 15, 1500, 950]);
+   
+   
+   x = 1:frames;
+   
+   xRot = rot90(x);
+   
+   wt_tail_angles = rad2deg(dataWT{1:frames, 3}) + 180;
+   pt_tail_angles = rad2deg(dataPT{1:frames, 3}) + 180;
+    
+   wt_spine_lengths = dataWT{1:frames, 2};
+   pt_spine_lengths = dataPT{1:frames, 2};
+
+    
+
+   
+   plot(x1, wt_speed, 'r*', 'LineWidth', 2', 'color', 'r');
+%     plot(x2, pt_speed, 'r*', 'LineWidth', 2', 'color', 'b');
+   grid on;
+   hold on;
+   plot(x1, f1, '--r', 'LineWidth', 2.0, 'color', 'b');
+%    plot(x2, f2, '--r', 'LineWidth', 2.0, 'color', 'r');
+
+   
+   title("$\textbf{\emph Tail Displacement Regression of Zebrafish, for  (" + frames + " frames at 300fps)}$", 'Interpreter','latex', 'FontSize', 20, 'fontweight', 'bold');
+    ylabel('$\textbf{\emph Speed (units/second)}$', 'fontweight', 'bold', 'fontsize', 16, 'Interpreter','latex');
+    xlabel('$\textbf{\emph Movement Cycle}$', 'fontweight' ,'bold', 'fontsize', 16, 'Interpreter','latex');
+    legend('$\textbf{\emph Speed}$', '$\textbf{\emph Regression Line}$', 'FontSize', 14, 'Interpreter','latex', 'fontweight', 'bold');
+   
+  
+   
+end
+
+
+
+
