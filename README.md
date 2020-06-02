@@ -3,6 +3,7 @@ Dissertation - Is the characterisation of Parkinson’s Disease in humans and ze
 
 tailAngle.m plots the tail angles of zebrafish over a period of time, which can be used to identify key movement traits.
 Example shown below:
+
 ![image of tailAngle results](https://imgur.com/OeR8rAT)
 
 
@@ -12,7 +13,7 @@ Example shown below:
 speedregressionplots.m calculates the regression of movement speed of the zebrafish over a period of time, to try and identify
 symptoms of the 'Sequence Effect'.
 
-![image of speedregressionplots results](https://imgur.com/3HsJZkI)
+![image of speedregressionplots results](https://i.imgur.com/3HsJZkI.png)
 
 ## speedregressionpercentage
 
