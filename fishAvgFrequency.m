@@ -22,10 +22,9 @@ theFilesPT = dir(filePatternPT);
 
 
 frames = 1500;
-
+% figure;
 
 gradients = zeros(length(theFilesWT), 2);
-
 
 
 for k = 1 : length(theFilesWT)
@@ -40,41 +39,29 @@ for k = 1 : length(theFilesWT)
     
     val = plotRegression(dataWT, dataPT, frames);
     
-    gradients(k, 1) = val(1);
-    gradients(k, 2) = val(2);
+%     wt_hesitations, pt_hesitations, wt_avg_amplitude, pt_avg_amplitude
+%     respectively
+    gradients(k,1) = val(1); 
+    gradients(k,2) = val(2);
 
-end
-
-wt_counter = 0;
-pt_counter = 0;
-
-for i = 1 : length(gradients)
     
-   if (gradients(i, 1) < 0)
-        
-       wt_counter = wt_counter + 1;
-       
-   end
-   
-   if (gradients(i, 2) < 0)
-        
-       pt_counter = pt_counter + 1;
-       
-   end
-      
 end
 
-wt_SE_percentage = (wt_counter / length(gradients)) * 100;
-pt_SE_percentage = (pt_counter / length(gradients)) * 100;
 
-fprintf('Control percentage of amplitude SE: %d%%\t', wt_SE_percentage);
-fprintf('PD percentage of amplitude SE: %d%%\n', pt_SE_percentage);
-
+% [mean(gradients(1:end,1)) mean(gradients(1:end,2)) mean(gradients(1:end,3)) mean(gradients(1:end,4))]
+fprintf('Control Average Tail Beat Frequency: %f\t', mean(gradients(1:end,1)));
+fprintf('PD Average Tail Beat Frequency: %f\n', mean(gradients(1:end,2)));
 
 
-function gradients = plotRegression(dataWT, dataPT, frames)
-  
+function values = plotRegression(dataWT, dataPT, frames)
+
+   %fixing figure window size
+   %set(gcf, 'Position',  [15, 15, 1500, 950]);
+   
+   
    x = 1:frames;
+   
+   xRot = rot90(x);
    
    wt_tail_angles = rad2deg(dataWT{1:frames, 3}) + 180;
    pt_tail_angles = rad2deg(dataPT{1:frames, 3}) + 180;
@@ -83,7 +70,6 @@ function gradients = plotRegression(dataWT, dataPT, frames)
    TF2 = islocalmin(pt_tail_angles);
    TF3 = islocalmax(wt_tail_angles);
    TF4 = islocalmax(pt_tail_angles);
-   
    
    lastTF1 = find(TF1,1,'last');
    lastTF2 = find(TF2,1,'last');
@@ -100,20 +86,25 @@ function gradients = plotRegression(dataWT, dataPT, frames)
         TF4(lastTF4) = [];
    elseif length(pt_tail_angles(TF4)) < length(pt_tail_angles(TF2))
         TF2(lastTF2) = [];
-   end 
-     
+   end
    
-   wt_amplitude = abs(wt_tail_angles(TF3) - wt_tail_angles(TF1));
-   pt_amplitude = abs(pt_tail_angles(TF4) - pt_tail_angles(TF2));
+    
+    
+    time = frames;
 
-   x1 = rot90(1:length(wt_amplitude));
-    x2 = rot90(1:length(pt_amplitude));
+    wt_minimas = sum(TF1(:) == 1);
+    pt_minimas = sum(TF2(:) == 1);
     
-    p1 = polyfit(x1, wt_amplitude,1);
-    p2 = polyfit(x2, pt_amplitude,1);
  
-    gradients = [p1(1) p2(1)];
     
+    % f = 1/t
+    wt_frequency = (wt_minimas)/(time);
+    pt_frequency = (pt_minimas)/(time);
+   
+   
+   values = [wt_frequency, pt_frequency];
+   
+   
 end
 
 

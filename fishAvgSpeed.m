@@ -1,5 +1,3 @@
-
-% -----------------------batch file processing-------------------------
 myWTFolder = './data/wildTypes/';
 myPTFolder = './data/parkinsonTypes/';
 
@@ -22,13 +20,12 @@ theFilesWT = dir(filePatternWT);
 filePatternPT = fullfile(myPTFolder, '*.csv');
 theFilesPT = dir(filePatternPT);
 
-%frames of data being analysed
+
 frames = 1500;
+% figure;
 
-% initialising 
-gradients = zeros(length(theFilesWT), 2);
+gradients = zeros(length(theFilesWT), 4);
 
-% -----------------------batch file processing-------------------------
 
 for k = 1 : length(theFilesWT)
     
@@ -41,46 +38,23 @@ for k = 1 : length(theFilesWT)
     dataPT = readtable(fullFileNamePT);
     
     val = plotRegression(dataWT, dataPT, frames);
-
-     gradients(k, 1) = val(1);
-     gradients(k, 2) = val(2);
-%     
-    if k+1 <= length(theFilesWT)
-%         figure(k+1);
-    end
-
-
-end
-
-
-wt_counter = 0;
-pt_counter = 0;
-
-for i = 1 : length(gradients)
     
-   if (gradients(i, 1) < 0)
-        
-       wt_counter = wt_counter + 1;
-       
-   end
-   
-   if (gradients(i, 2) < 0)
-        
-       pt_counter = pt_counter + 1;
-       
-   end
-      
+%     wt_hesitations, pt_hesitations, wt_avg_amplitude, pt_avg_amplitude
+%     respectively
+    gradients(k,1) = val(1); 
+    gradients(k,2) = val(2);
+    gradients(k,3) = val(3);
+    gradients(k,4) = val(4);
+    
 end
 
-wt_SE_percentage = (wt_counter / length(gradients)) * 100;
-pt_SE_percentage = (pt_counter / length(gradients)) * 100;
 
-fprintf('Control percentage of speed SE: %d%%\t', wt_SE_percentage);
-fprintf('PD percentage of speed SE: %d%%\n', pt_SE_percentage);
-
+% [mean(gradients(1:end,1)) mean(gradients(1:end,2)) mean(gradients(1:end,3)) mean(gradients(1:end,4))]
+fprintf('Control Average Tail Speed: %f\t', mean(gradients(1:end,3)));
+fprintf('PD Average Tail Speed: %f\n', mean(gradients(1:end,4)));
 
 
-function gradients = plotRegression(dataWT, dataPT, frames)
+function values = plotRegression(dataWT, dataPT, frames)
 
    %fixing figure window size
    %set(gcf, 'Position',  [15, 15, 1500, 950]);
@@ -120,42 +94,40 @@ function gradients = plotRegression(dataWT, dataPT, frames)
    wt_speed = abs( ( wt_tail_angles(TF3)-wt_tail_angles(TF1) )./( (xRot(TF3)-xRot(TF1))* 0.00333333 ) );
    pt_speed = abs( ( pt_tail_angles(TF4)-pt_tail_angles(TF2) )./( (xRot(TF4)-xRot(TF2))* 0.00333333 ) );
 
-   x1 = rot90(1:length(wt_speed));
-   x2 = rot90(1:length(pt_speed));
+   mean_wt_speed = mean(wt_speed);
+   mean_pt_speed = mean(pt_speed);
    
-   p1 = polyfit(x1, wt_speed,1);
-   %f1 = polyval(p1,x2);
-    
-   p2 = polyfit(x2, pt_speed,1);
-   %f2 = polyval(p2,x2);
-  
+   [wt_hesitation_counter, pt_hesitation_counter] = identify_hesitations(wt_speed, pt_speed);
    
-   % the return value of polyfit is [slope, intercept]
-   % so p1(1) prints out the slope of the regression line
+   values = [wt_hesitation_counter, pt_hesitation_counter, mean_wt_speed, mean_pt_speed];
    
-   wt_gradient = p1(1);
-   pt_gradient = p2(1);
-   
-   gradients = [wt_gradient pt_gradient];
-   
-%    plot(x1, wt_speed, 'r*', 'LineWidth', 2', 'color', 'r');
-%     plot(x2, pt_speed, 'r*', 'LineWidth', 2', 'color', 'b');
-%    grid on;
-%    hold on;
-%    plot(x2, f2, '--r', 'LineWidth', 2.0, 'color', 'r');
-%    plot(x2, f1, '--r', 'LineWidth', 2.0, 'color', 'b');
-   
-%    title("$\textbf{\emph Tail Speed Regression of Zebrafish, for  (" + frames + " frames at 300fps)}$", 'Interpreter','latex', 'FontSize', 20, 'fontweight', 'bold');
-%     ylabel('$\textbf{\emph Speed (units/second)}$', 'fontweight', 'bold', 'fontsize', 16, 'Interpreter','latex');
-%     xlabel('$\textbf{\emph Movement Cycle}$', 'fontweight' ,'bold', 'fontsize', 16, 'Interpreter','latex');
-%     legend('$\textbf{\emph Speed}$', '$\textbf{\emph Regression Line}$', 'FontSize', 14, 'Interpreter','latex', 'fontweight', 'bold');
-%    
-%    ylim([0 4000]);
    
 end
 
 
+function [wt_hesitation_counter, pt_hesitation_counter] = identify_hesitations(wt_speed, pt_speed)
 
+    
+    
+    wt_hesitation_counter = 0;
+    pt_hesitation_counter = 0;
+    
+    for i = 1 : size(wt_speed)
+        
+        if(wt_speed(i) <= 0.05*max(wt_speed))
+            wt_hesitation_counter = wt_hesitation_counter + 1;
+        end
+    end
+    
+    for i = 1 : size(pt_speed)
+        
+        if(pt_speed(i) <= 0.05*max(pt_speed))
+            pt_hesitation_counter = pt_hesitation_counter + 1;
+        end
+    end
+    
+    
+end
 
 
 
