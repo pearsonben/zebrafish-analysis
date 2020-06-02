@@ -1,12 +1,12 @@
 # zebrafish-analysis
 Dissertation - Is the characterisation of Parkinson’s Disease in humans and zebrafish possible by using evolutionary algorithms?
 
+## tailAngle
+
 tailAngle.m plots the tail angles of zebrafish over a period of time, which can be used to identify key movement traits.
 Example shown below:
 
 ![image of tailAngle results](https://i.imgur.com/OeR8rAT.png)
-
-
 
 ## speedregressionplots
 
@@ -24,14 +24,14 @@ or Parkinsonian zebrafish display more signs of fatigue
 
 The same processes as used in the speedregression files, however with the amplitudes of movements instead of speed.
 
-##fishHesitations
+## fishHesitations
 
 fishHesitations performs an algorithm on the movement data of every zebrafish, and determines how many hesitations are present 
 in the movements.
 
-##fishFrequency
+## fishFrequency
 
 fishFrequency.m calculates the frequency of the tail beat 
 
-## tailAngle
+
 
