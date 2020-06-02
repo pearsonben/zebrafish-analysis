@@ -4,7 +4,7 @@ Dissertation - Is the characterisation of Parkinson’s Disease in humans and ze
 tailAngle.m plots the tail angles of zebrafish over a period of time, which can be used to identify key movement traits.
 Example shown below:
 
-![image of tailAngle results](https://imgur.com/OeR8rAT)
+![image of tailAngle results](https://i.imgur.com/OeR8rAT.png)
 
 
 
